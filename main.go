@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-func includes(nameSlice []string, word string) bool {
-	for _, name := range nameSlice {
-		if strings.ToLower(name) == word {
+func includes(sliceOfString []string, wordToBeMatched string) bool {
+	for _, name := range sliceOfString {
+		if strings.ToLower(name) == wordToBeMatched {
 			return true
 		}
 	}
@@ -36,31 +36,31 @@ func wakeUpServices(rootDir string) {
 		}
 	}
 
-	for _, item := range fileNames {
+	for _, dirName := range fileNames {
 
-		splitName := strings.Split(item, "-")
+		sliceOfName := strings.Split(dirName, "-")
 
-		if includes(splitName, "frontend") {
+		if includes(sliceOfName, "frontend") {
 			cmd := exec.Command(
 				"osascript",
-				"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && yarn dev"`, rootDir, item),
+				"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && yarn dev"`, rootDir, dirName),
 			)
 
 			if err := cmd.Start(); err != nil {
 				log.Fatal(err.Error())
 			} else {
-				fmt.Println("Running Frontend service -> " + item)
+				fmt.Println("Running Frontend service -> " + dirName)
 			}
 		} else {
 			cmd2 := exec.Command(
 				"osascript",
-				"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && mvn spring-boot:run"`, rootDir, item),
+				"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && mvn spring-boot:run"`, rootDir, dirName),
 			)
 
 			if err := cmd2.Start(); err != nil {
 				log.Fatal(err.Error())
 			} else {
-				fmt.Println("Running Backend service -> " + item)
+				fmt.Println("Running Backend service -> " + dirName)
 			}
 		}
 	}
