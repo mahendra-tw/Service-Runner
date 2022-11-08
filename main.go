@@ -17,7 +17,7 @@ func includes(sliceOfString []string, wordToBeMatched string) bool {
 	return false
 }
 
-func wakeUpServices(rootDir string) {
+func wakeUpServices(rootDir string, packman string) {
 
 	files, err := os.ReadDir(rootDir)
 
@@ -41,16 +41,31 @@ func wakeUpServices(rootDir string) {
 		sliceOfName := strings.Split(dirName, "-")
 
 		if includes(sliceOfName, "frontend") {
-			cmd := exec.Command(
-				"osascript",
-				"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && yarn dev"`, rootDir, dirName),
-			)
 
-			if err := cmd.Start(); err != nil {
-				log.Fatal(err.Error())
-			} else {
-				fmt.Println("Running Frontend service -> " + dirName)
+			if strings.ToLower(packman) == "npm" {
+				cmd := exec.Command(
+					"osascript",
+					"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && npm run dev"`, rootDir, dirName),
+				)
+
+				if err := cmd.Start(); err != nil {
+					log.Fatal(err.Error())
+				} else {
+					fmt.Println("Running Frontend service -> " + dirName)
+				}
+			} else if strings.ToLower(packman) == "yarn" {
+				cmd := exec.Command(
+					"osascript",
+					"-e", fmt.Sprintf(`tell application "Terminal" to do script "cd %s/%s && yarn dev"`, rootDir, dirName),
+				)
+
+				if err := cmd.Start(); err != nil {
+					log.Fatal(err.Error())
+				} else {
+					fmt.Println("Running Frontend service -> " + dirName)
+				}
 			}
+
 		} else {
 			cmd2 := exec.Command(
 				"osascript",
@@ -79,5 +94,16 @@ func main() {
 	}
 	fmt.Println("AHM_ROOT_DIR found to be ", ahmRootDir)
 
-	wakeUpServices(ahmRootDir)
+	fmt.Println("Checking for AHM_PACKAGE_MANAGER value ...")
+
+	ahmPackMan, isPackManPresent := os.LookupEnv("AHM_PACKAGE_MANAGER")
+
+	if !isPackManPresent {
+		fmt.Println("No value found for AHM_PACKAGE_MANAGER")
+		fmt.Println("exitting...")
+		os.Exit(1)
+	}
+	fmt.Println("AHM_PACKAGE_MANAGER found to be ", ahmPackMan)
+
+	wakeUpServices(ahmRootDir, ahmPackMan)
 }
