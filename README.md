@@ -10,7 +10,10 @@ Wake up all the fronend and backend services with one command
 4. If you want to compile the script yourself:
   1. Run `go run main.go` and check for desired output.
   2. Once you got the desired output, run command `go build`. This will compile the source code to a binary named `Service-Runner`.
-5. If you want to run the provided binary, run command `./<The binary name>`.
+5. If you want to run the provided binary, 
+   1. run command `./<The binary name> based on the processor your Mac has`.
+   2. For M1 Macbooks, run Service-Runner-darwin-arm64.
+   3. For intel Macbooks, run Service-Runner-darwin-amd64.
 
 ## When you run...
 
